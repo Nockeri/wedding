@@ -291,6 +291,8 @@
             box-shadow: 0 0 0 4px rgba(45,90,39,0.15);
             background: #ffffff;
         }
+
+        /* Группы радио и чекбоксов */
         .radio-group {
             display: flex;
             gap: 35px;
@@ -305,7 +307,17 @@
             font-size: 1.1rem;
             font-family: 'Playfair Display', serif;
             color: #2c3e2d;
+            padding: 6px 10px;           /* увеличиваем область нажатия */
+            border-radius: 8px;
+            transition: background 0.15s, transform 0.15s;
+            user-select: none;           /* отключаем выделение текста при тапе */
         }
+        /* Эффект нажатия для радио и чекбоксов */
+        .radio-group label:active {
+            background: rgba(60,107,60,0.12);
+            transform: scale(0.97);
+        }
+
         .checkbox-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -320,7 +332,25 @@
             cursor: pointer;
             font-family: 'Playfair Display', serif;
             color: #2c3e2d;
+            padding: 6px 8px;
+            border-radius: 8px;
+            transition: background 0.15s, transform 0.15s;
+            user-select: none;
         }
+        .checkbox-grid label:active {
+            background: rgba(60,107,60,0.12);
+            transform: scale(0.97);
+        }
+
+        /* Скрытое поле для второго гостя */
+        .hidden-field {
+            display: none;
+            margin-top: 0.8rem;
+        }
+        .hidden-field.visible {
+            display: block;
+        }
+
         .other-allergy { margin-top: 18px; }
         .btn {
             background: transparent;
@@ -344,6 +374,10 @@
             box-shadow: 0 12px 25px rgba(60,107,60,0.4);
             transform: translateY(-2px);
         }
+        .btn:active {
+            transform: scale(0.96);
+            background: #2d5a27;
+        }
         .success-message {
             text-align: center;
             font-size: 1.3rem;
@@ -351,15 +385,6 @@
             margin-top: 1.5rem;
             display: none;
             font-style: italic;
-        }
-
-        /* Скрытое поле для второго гостя */
-        .hidden-field {
-            display: none;
-            margin-top: 0.8rem;
-        }
-        .hidden-field.visible {
-            display: block;
         }
 
         @media (max-width: 600px) {
@@ -597,7 +622,7 @@
             plusOneContainer.classList.add('visible');
         } else {
             plusOneContainer.classList.remove('visible');
-            plusOneInput.value = ''; // очищаем поле при скрытии
+            plusOneInput.value = '';
         }
     }
 
@@ -606,7 +631,7 @@
     });
 
     // ---------- ОТПРАВКА В GOOGLE ТАБЛИЦУ ----------
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTDORVKuIukHz7R9cSJphsh2WkG3mhMFNIB-xjHJ4bl0SuOB4EpQ_463CjgoGcslNV/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjvA1WgAnl4U2rLZ5ZJ7Jo8q-qL8UPPhlKgTov16KHgnA98VF3f4oo5MnPJKqQKqSa/exec";
 
     document.getElementById("rsvpForm").addEventListener("submit", function(e) {
         e.preventDefault();
@@ -637,7 +662,6 @@
             return;
         }
 
-        // Если выбран «Приду не один», но имя второго гостя не заполнено
         if (attendanceValue === 'Приду не один' && !plusOne) {
             alert("Пожалуйста, введите имя второго гостя.");
             return;
@@ -652,7 +676,7 @@
         .then(() => {
             document.getElementById("successMsg").style.display = "block";
             document.getElementById("rsvpForm").reset();
-            plusOneContainer.classList.remove('visible'); // скрываем поле после отправки
+            plusOneContainer.classList.remove('visible');
             setTimeout(() => {
                 document.getElementById("successMsg").style.display = "none";
             }, 5000);
