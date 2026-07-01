@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Алексей и Светлана | Приглашение на свадьбу</title>
 
-    <!-- Шрифты: Playfair Display + Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
@@ -31,7 +30,6 @@
             position: relative;
         }
 
-        /* Парящие частицы (зелёные) */
         .particle {
             position: fixed;
             border-radius: 50%;
@@ -57,7 +55,6 @@
             z-index: 1;
         }
 
-        /* Декоративные разделители */
         .divider {
             display: flex;
             align-items: center;
@@ -75,7 +72,6 @@
             background: linear-gradient(to right, transparent, #3c6b3c, transparent);
         }
 
-        /* Типографика */
         h2 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
@@ -307,14 +303,18 @@
             font-size: 1.1rem;
             font-family: 'Playfair Display', serif;
             color: #2c3e2d;
-            padding: 6px 10px;           /* увеличиваем область нажатия */
+            padding: 6px 10px;
             border-radius: 8px;
-            transition: background 0.15s, transform 0.15s;
-            user-select: none;           /* отключаем выделение текста при тапе */
+            transition: background 0.2s, transform 0.2s;
+            user-select: none;
         }
-        /* Эффект нажатия для радио и чекбоксов */
-        .radio-group label:active {
+        /* Активный (выбранный) вариант радиокнопки */
+        .radio-group label.checked-label {
             background: rgba(60,107,60,0.12);
+        }
+        /* Эффект нажатия */
+        .radio-group label:active {
+            background: rgba(60,107,60,0.2);
             transform: scale(0.97);
         }
 
@@ -334,11 +334,15 @@
             color: #2c3e2d;
             padding: 6px 8px;
             border-radius: 8px;
-            transition: background 0.15s, transform 0.15s;
+            transition: background 0.2s, transform 0.2s;
             user-select: none;
         }
-        .checkbox-grid label:active {
+        /* Выбранный чекбокс */
+        .checkbox-grid label.checked-label {
             background: rgba(60,107,60,0.12);
+        }
+        .checkbox-grid label:active {
+            background: rgba(60,107,60,0.2);
             transform: scale(0.97);
         }
 
@@ -522,13 +526,11 @@
                     </div>
                 </div>
 
-                <!-- Скрытое поле для имени второго гостя -->
                 <div class="form-group hidden-field" id="plusOneContainer">
                     <label>Имя второго гостя</label>
                     <input type="text" id="plusOneName" placeholder="Введите имя">
                 </div>
 
-                <!-- Выпадающий список выбора алкоголя -->
                 <div class="form-group">
                     <label>Предпочтения по алкоголю</label>
                     <select id="alcoholSelect" name="alcohol">
@@ -611,8 +613,49 @@
     setInterval(countdown, 1000);
     countdown();
 
+    // ---------- ВЫДЕЛЕНИЕ ВЫБРАННЫХ РАДИО И ЧЕКБОКСОВ ----------
+    function updateCheckedLabels() {
+        // Радиокнопки
+        document.querySelectorAll('input[name="attendance"]').forEach(radio => {
+            const label = radio.closest('label');
+            if (label) {
+                if (radio.checked) {
+                    label.classList.add('checked-label');
+                } else {
+                    label.classList.remove('checked-label');
+                }
+            }
+        });
+
+        // Чекбоксы аллергии
+        document.querySelectorAll('#allergyList input[type="checkbox"]').forEach(checkbox => {
+            const label = checkbox.closest('label');
+            if (label) {
+                if (checkbox.checked) {
+                    label.classList.add('checked-label');
+                } else {
+                    label.classList.remove('checked-label');
+                }
+            }
+        });
+    }
+
+    // Обработчик изменения радио и чекбоксов
+    document.querySelectorAll('#attendanceGroup input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateCheckedLabels();
+            togglePlusOne(); // вызов функции для отображения поля второго гостя
+        });
+    });
+
+    document.querySelectorAll('#allergyList input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateCheckedLabels);
+    });
+
+    // Вызов при загрузке (если вдруг что-то предвыбрано)
+    updateCheckedLabels();
+
     // ---------- ЛОГИКА ДЛЯ ДОПОЛНИТЕЛЬНОГО ГОСТЯ ----------
-    const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
     const plusOneContainer = document.getElementById('plusOneContainer');
     const plusOneInput = document.getElementById('plusOneName');
 
@@ -625,10 +668,6 @@
             plusOneInput.value = '';
         }
     }
-
-    attendanceRadios.forEach(radio => {
-        radio.addEventListener('change', togglePlusOne);
-    });
 
     // ---------- ОТПРАВКА В GOOGLE ТАБЛИЦУ ----------
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjvA1WgAnl4U2rLZ5ZJ7Jo8q-qL8UPPhlKgTov16KHgnA98VF3f4oo5MnPJKqQKqSa/exec";
@@ -677,6 +716,8 @@
             document.getElementById("successMsg").style.display = "block";
             document.getElementById("rsvpForm").reset();
             plusOneContainer.classList.remove('visible');
+            // Сбрасываем подсветку после очистки формы
+            setTimeout(updateCheckedLabels, 10);
             setTimeout(() => {
                 document.getElementById("successMsg").style.display = "none";
             }, 5000);
