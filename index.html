@@ -20,12 +20,11 @@
         body {
             font-family: 'Playfair Display', 'Georgia', serif;
             font-size: 18px;
-            /* Белый фон с едва заметным зелёным узором */
             background: 
                 linear-gradient(135deg, #ffffff 0%, #f7fbf5 100%),
                 url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20 Q25 15 30 20 Q35 25 30 30 Q25 35 20 30 Z' fill='%233c6b3c' opacity='0.04'/%3E%3Ccircle cx='70' cy='70' r='2' fill='%233c6b3c' opacity='0.06'/%3E%3Cpath d='M75 75 Q80 70 85 75 Q90 80 85 85 Q80 90 75 85 Z' fill='%233c6b3c' opacity='0.03'/%3E%3Ccircle cx='45' cy='15' r='1.5' fill='%233c6b3c' opacity='0.08'/%3E%3Ccircle cx='55' cy='85' r='1.5' fill='%233c6b3c' opacity='0.08'/%3E%3C/svg%3E");
             background-blend-mode: multiply;
-            color: #2c3e2d; /* глубокий зелёно-чёрный для текста */
+            color: #2c3e2d;
             line-height: 1.7;
             overflow-x: hidden;
             font-weight: 400;
@@ -83,7 +82,7 @@
             font-size: 2.2rem;
             letter-spacing: 4px;
             text-transform: uppercase;
-            color: #2d5a27; /* насыщенный зелёный */
+            color: #2d5a27;
             text-align: center;
             margin-bottom: 2rem;
         }
@@ -113,10 +112,8 @@
             margin: 1.5rem 0 3rem;
         }
 
-        /* Секции */
         section { padding: 50px 0; position: relative; }
 
-        /* Детали праздника */
         .details-card {
             background: rgba(255,255,255,0.9);
             backdrop-filter: blur(10px);
@@ -141,7 +138,6 @@
             font-size: 1.2rem;
         }
 
-        /* Пожелания, чат, фото — карточки с зелёными виньетками */
         .wishes, .chat-section, .photo-section {
             background: rgba(255,255,255,0.9);
             backdrop-filter: blur(10px);
@@ -154,7 +150,6 @@
             overflow: hidden;
         }
 
-        /* Виньетки-уголки */
         .wishes::before, .wishes::after,
         .chat-section::before, .chat-section::after,
         .photo-section::before, .photo-section::after {
@@ -208,7 +203,6 @@
             transform: translateY(-3px);
         }
 
-        /* Фото */
         .photo-section { text-align: center; }
         .photo-section p { font-size: 1.4rem; margin-bottom: 2rem; font-style: italic; color: #2c3e2d; }
         .photo-img {
@@ -225,7 +219,6 @@
         }
         .photo-img:hover { transform: scale(1.02); }
 
-        /* Таймер */
         .timer {
             display: flex;
             justify-content: center;
@@ -255,7 +248,6 @@
             letter-spacing: 1px;
         }
 
-        /* Форма */
         .rsvp {
             background: rgba(255,255,255,0.9);
             backdrop-filter: blur(10px);
@@ -361,7 +353,15 @@
             font-style: italic;
         }
 
-        /* Адаптивность */
+        /* Скрытое поле для второго гостя */
+        .hidden-field {
+            display: none;
+            margin-top: 0.8rem;
+        }
+        .hidden-field.visible {
+            display: block;
+        }
+
         @media (max-width: 600px) {
             .names { font-size: 3.5rem; }
             .and-sign { font-size: 2rem; }
@@ -372,7 +372,6 @@
             h2 { font-size: 1.8rem; }
         }
 
-        /* Анимация появления */
         .fade-in {
             opacity: 0;
             transform: translateY(25px);
@@ -412,7 +411,7 @@
     <div class="container fade-in">
         <h2>Детали</h2>
         <div class="details-card">
-            <p><i>🕓</i> Сбор гостей в 16:00, начало в 17:00</p>
+            <p><i>🕓</i> Сбор гостей в 15:20, окончание в 23:00</p>
             <p><i>👔</i> Дресс-код: свободный</p>
 
             <!-- Карта -->
@@ -472,9 +471,8 @@
     <div class="container fade-in">
         <h2>Наш снимок</h2>
         <div class="photo-section">
-            <p>Самый дорогой для нас кадр</p>
-            <!-- ⚠️ ВСТАВЬТЕ ССЫЛКУ НА ФОТО В АТРИБУТ src НИЖЕ -->
-            <img src="ВСТАВЬТЕ_ССЫЛКУ_НА_ФОТО" alt="Алексей и Светлана" class="photo-img">
+            <p>Наше фото</p>
+            <img src="https://i.oneme.ru/i?r=BTE2sh_eZW7g8kugOdIm2NotaM_uV6cAKnOk_3dKoDd-Ree3mL9bAhQvuevD9tVCgus" alt="Алексей и Светлана" class="photo-img">
         </div>
     </div>
 </section>
@@ -492,10 +490,17 @@
 
                 <div class="form-group">
                     <label>Вы будете? *</label>
-                    <div class="radio-group">
+                    <div class="radio-group" id="attendanceGroup">
                         <label><input type="radio" name="attendance" value="Буду" required> С удовольствием буду!</label>
                         <label><input type="radio" name="attendance" value="Не смогу"> К сожалению, не смогу</label>
+                        <label><input type="radio" name="attendance" value="Приду не один"> Приду не один (+1)</label>
                     </div>
+                </div>
+
+                <!-- Скрытое поле для имени второго гостя -->
+                <div class="form-group hidden-field" id="plusOneContainer">
+                    <label>Имя второго гостя</label>
+                    <input type="text" id="plusOneName" placeholder="Введите имя">
                 </div>
 
                 <!-- Выпадающий список выбора алкоголя -->
@@ -505,8 +510,9 @@
                         <option value="">-- Выберите --</option>
                         <option value="Вино">Вино</option>
                         <option value="Шампанское">Шампанское</option>
-                        <option value="Пиво">Пиво</option>
-                        <option value="Крепкий алкоголь">Крепкий алкоголь</option>
+                        <option value="Водка">Водка</option>
+                        <option value="Коньяк">Коньяк</option>
+                        <option value="Виски">Виски</option>
                         <option value="Безалкогольное">Безалкогольное</option>
                         <option value="Всё равно">Всё равно</option>
                     </select>
@@ -580,8 +586,27 @@
     setInterval(countdown, 1000);
     countdown();
 
+    // ---------- ЛОГИКА ДЛЯ ДОПОЛНИТЕЛЬНОГО ГОСТЯ ----------
+    const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+    const plusOneContainer = document.getElementById('plusOneContainer');
+    const plusOneInput = document.getElementById('plusOneName');
+
+    function togglePlusOne() {
+        const selected = document.querySelector('input[name="attendance"]:checked');
+        if (selected && selected.value === 'Приду не один') {
+            plusOneContainer.classList.add('visible');
+        } else {
+            plusOneContainer.classList.remove('visible');
+            plusOneInput.value = ''; // очищаем поле при скрытии
+        }
+    }
+
+    attendanceRadios.forEach(radio => {
+        radio.addEventListener('change', togglePlusOne);
+    });
+
     // ---------- ОТПРАВКА В GOOGLE ТАБЛИЦУ ----------
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjvA1WgAnl4U2rLZ5ZJ7Jo8q-qL8UPPhlKgTov16KHgnA98VF3f4oo5MnPJKqQKqSa/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTDORVKuIukHz7R9cSJphsh2WkG3mhMFNIB-xjHJ4bl0SuOB4EpQ_463CjgoGcslNV/exec";
 
     document.getElementById("rsvpForm").addEventListener("submit", function(e) {
         e.preventDefault();
@@ -595,9 +620,13 @@
         const alcoholSelect = document.getElementById("alcoholSelect");
         const alcoholPreference = alcoholSelect.value || "Не указано";
 
+        const attendanceValue = document.querySelector('input[name="attendance"]:checked')?.value || "";
+        const plusOne = attendanceValue === 'Приду не один' ? plusOneInput.value.trim() : "";
+
         const formData = {
             name: document.getElementById("guestName").value.trim(),
-            attendance: document.querySelector('input[name="attendance"]:checked')?.value || "",
+            attendance: attendanceValue,
+            plusOne: plusOne,
             alcohol: alcoholPreference,
             allergies: allergyString,
             date: new Date().toLocaleString("ru-RU")
@@ -605,6 +634,12 @@
 
         if (!formData.name || !formData.attendance) {
             alert("Пожалуйста, укажите имя и отметку о присутствии.");
+            return;
+        }
+
+        // Если выбран «Приду не один», но имя второго гостя не заполнено
+        if (attendanceValue === 'Приду не один' && !plusOne) {
+            alert("Пожалуйста, введите имя второго гостя.");
             return;
         }
 
@@ -617,6 +652,7 @@
         .then(() => {
             document.getElementById("successMsg").style.display = "block";
             document.getElementById("rsvpForm").reset();
+            plusOneContainer.classList.remove('visible'); // скрываем поле после отправки
             setTimeout(() => {
                 document.getElementById("successMsg").style.display = "none";
             }, 5000);
